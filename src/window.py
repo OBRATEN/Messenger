@@ -22,6 +22,17 @@ from dialog import Ui_Dialog
 from mainwindow import Ui_MainWindow
 
 
+class Message:
+    def __init__(self, *args: list[int, str, list[str]]) -> None:
+        self.id = int(args[0])
+        self.author = args[1]
+        self.adress = args[2]
+        self.content = "".join(args[3])
+
+    def __str__(self) -> str:
+        return self.content
+
+
 class MessageChecker(QThread):
     def __init__(self, parent=None) -> None:
         super(QThread, self).__init__()
@@ -51,17 +62,6 @@ class MessageChecker(QThread):
                 print(f"Message send: {time.time() - self.timer} sec")
 
 
-class Message:
-    def __init__(self, *args: list[int, str, list[str]]) -> None:
-        self.id = int(args[0])
-        self.author = args[1]
-        self.adress = args[2]
-        self.content = "".join(args[3])
-
-    def __str__(self) -> str:
-        return self.content
-
-
 class Database:
     def __init__(self, path: str) -> None:
         self.path = path
@@ -79,12 +79,14 @@ class Database:
 
     def getAllIds(self, table: str) -> tuple[int]:
         try:
-            return self.cur.execute(f"SELECT id FROM {table};").fetchall()
+            return self.cur.execute(f"SELECT id FROM '{table}';").fetchall()
         except sqlite3.OperationalError:
             print(self.__class__, f"No such table: {table}")
 
     def getLastMessageId(self, table: str) -> int:
         try:
+            print(self.cur.execute(f"SELECT MAX(id) \
+FROM '{table}';").fetchone()[0])
             return self.cur.execute(f"SELECT MAX(id) \
 FROM '{table}';").fetchone()[0]
         except sqlite3.OperationalError:
@@ -139,7 +141,7 @@ VALUES (?, ?, ?, ?, ?, ?);"
 
     def addDialog(self, name: str, addr: str, port: str) -> NoReturn:
         try:
-            self.cur.execute(f"CREATE TABLE '{name}' \
+            self.cur.execute(f"CREATE TABLE IF NOT EXISTS'{name}' \
 (id INT NOT NULL, \
 author TEXT NOT NULL, \
 address TEXT NOT NULL, \
@@ -147,7 +149,7 @@ content TEXT NOT NULL, \
 ip TEXT DEFAULT localhost, \
 port TEXT DEFAULT (22));")
             self.cur.execute(f"INSERT INTO '{name}' \
-VALUES (-1, 0, 0, 0, '{addr}', '{port}');")
+VALUES (-1, '{name}', '{name}', 0, '{addr}', '{port}');")
             self.db.commit()
         except sqlite3.OperationalError as e:
             print(self.__class__, "Can't add dialog table to database:", e)
@@ -239,7 +241,7 @@ class Window(QMainWindow, Ui_MainWindow):
         webbrowser.open("https://github.com/OBRATEN/Messenger")
 
     def saveChat(self) -> None:
-        if self.curChat:
+        if self.curChat and len(self.db.getDialogContent(self.curChat)) > 1:
             fname = QFileDialog.getSaveFileName(self,
                                                 "Save dialog", self.curdir)[0]
             if not fname:
@@ -247,8 +249,7 @@ class Window(QMainWindow, Ui_MainWindow):
             with open(fname, "w") as f:
                 data = self.db.getDialogContent(self.curChat)
                 for el in data:
-                    if el[2] == self.user:
-                        f.write('|'.join(list(map(str, el))) + "\n")
+                    f.write('|'.join(list(map(str, el))) + "\n")
 
     def openChat(self) -> None:
         fname = QFileDialog.getOpenFileName(self,
@@ -257,15 +258,24 @@ class Window(QMainWindow, Ui_MainWindow):
             return
         with open(fname, "r") as f:
             data = [el.strip().split('|') for el in f.readlines()]
+            print(data[1])
+            if data[1][1] == self.user:
+                self.db.addDialog(data[1][2], data[1][4], data[1][5])
+                self.ChatsList.addItem(data[1][2])
+                self.curChat = data[1][2]
+                self.ChatsList.setCurrentItem(data[1][2])
+            elif data[1][2] == self.user:
+                self.db.addDialog(data[1][1], data[1][4], data[1][5])
+                self.ChatsList.addItem(QListWidgetItem(data[1][1]))
+                self.curChat = data[1][1]
+                self.ChatsList.setCurrentItem(QListWidgetItem(data[1][1]))
             for el in data:
-                if el[2] == self.user or el[1] == self.user:
-                    ids = [el[0] for el in self.db.getAllIds(el[2])]
-                    print(ids)
-                    el[0] = int(el[0])
-                    if el[0] not in ids:
-                        el[-1] = int(el[-1])
-                        mes = Message(el[0], el[1], el[2], el[3], el[4], el[5])
-                        self.db.addMessage(el[1], mes)
+                ids = [el[0] for el in self.db.getAllIds(self.curChat)]
+                el[0] = int(el[0])
+                if el[0] not in ids:
+                    el[-1] = int(el[-1])
+                    mes = Message(el[0], el[1], el[2], el[3], el[4], el[5])
+                    self.db.addMessage(el[1], mes)
             self.relogDialog()
 
     def hideMessageBar(self) -> NoReturn:
@@ -392,7 +402,7 @@ def getCurDir() -> str:
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    file = QFile(f"{getCurDir()}/src/stylesheet.qss")
+    file = QFile(f"{getCurDir()}/src/dark/stylesheet.qss")
     file.open(QFile.ReadOnly | QFile.Text)
     stream = QTextStream(file)
     app.setStyleSheet(stream.readAll())

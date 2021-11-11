@@ -1,4 +1,42 @@
-True
-True
-True
-True
+qt.svg: Cannot open file ':/dark/dialog_cancel.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_cancel.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_close.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_close.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_ok.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_ok.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_open.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_open.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_reset.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_reset.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_save.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_save.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_ok.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_ok.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_help.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_help.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_no.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_no.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_ok.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_ok.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_discard.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/dialog_discard.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/down_arrow.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/down_arrow.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/up_arrow.svg', because: No such file or directory
+qt.svg: Cannot open file ':/dark/up_arrow.svg', because: No such file or directory
+['0', 'chat', 'arthur', 'h', 'localhost', '22']
+<class '__main__.Database'> Can't get user address: no such table: arthur
+<class '__main__.Database'> Can't get port: no such table: arthur
+<class '__main__.Database'> Can't add message to chat: no such table: arthur
+<class '__main__.Database'> Can't get user address: no such table: arthur
+<class '__main__.Database'> Can't get port: no such table: arthur
+<class '__main__.Database'> Can't add message to chat: no such table: arthur
+<class '__main__.Database'> Can't get user address: no such table: arthur
+<class '__main__.Database'> Can't get port: no such table: arthur
+<class '__main__.Database'> Can't add message to chat: no such table: arthur
+False
+False
+False
+False
+False
+False

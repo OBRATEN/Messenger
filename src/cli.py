@@ -4,6 +4,8 @@ import threading
 import pickle
 import sqlite3
 
+from typing import Union, NoReturn
+
 
 class Message:
     def __init__(self, *args) -> None:
@@ -117,28 +119,6 @@ VALUES (-1, 0, 0, 0, '{addr}', '{port}');")
         self.db.close()
 
 
-class AddUserDialog(QDialog, Ui_Dialog):
-    def __init__(self, perent=None) -> None:
-        super().__init__()
-        self.setupUi(self)
-        self.withAuth = False
-        self.useKeys.stateChanged.connect(self.addAuth)
-
-    def addAuth(self) -> NoReturn:
-        self.passwordLine.setReadOnly(self.withAuth)
-        self.withAuth = not self.withAuth
-
-    def getVals(self) -> tuple[str]:
-        if self.withAuth:
-            res = os.system(f"""sshpass -p "{self.passwordLine.text()}" \
-ssh-copy-id -f -p {self.portLine.text()} \
-{self.nameLine.text()}@{self.addressLine.text()}""")
-            if res:
-                print(self.__class__, "Auth is not completed!")
-        return (self.nameLine.text(),
-                self.addressLine.text(), self.portLine.text())
-
-
 class Client:
     def __init__(self, *args) -> None:
         self.user = os.getlogin()
@@ -178,7 +158,7 @@ class Client:
                 db = Database(os.getcwd() + "/data/database.db")
                 with open(self.infn, "rb") as fb:
                     ex = pickle.load(fb)
-                    db.addMessage(ex)
+                    db.addMessage(ex.author, ex)
                     if self.mode == "standart":
                         self.mesbuf.append(ex)
                     elif self.mode == "chat":
@@ -191,37 +171,20 @@ class Client:
         while True:
             cmd = input(">>> ")
             if cmd == "help":
-                print("send, check, chat, clear, exit")
+                print("send, check, clear")
             elif cmd == "send":
                 sendto = input("Send to:\n")
                 print("Content: ")
                 content = sys.stdin.readlines()
-                mes = Message(db.getLastMessageId("messages") +
-                              1, self.user.name, sendto, content)
-                db.addMessage(mes)
+                mes = Message(db.getLastMessageId(sendto) +
+                              1, self.user, sendto, content)
+                db.addMessage(sendto, mes)
                 self.writeMessage(mes)
             elif cmd == "check":
                 for el in self.mesbuf:
                     print(f"Message from {el.author}:")
                     print(el)
                 self.mesbuf.clear()
-            elif "chat" == cmd.split()[0]:
-                self.mode = "chat"
-                args = cmd.split()
-                data = db.getDialogContent(0)
-                for i in range(1, len(data)):
-                    if data[i][1] == self.user.name:
-                        print(f"Вы: {data[i][3]}")
-                    else:
-                        print(f"{data[i][1]}: {data[i][3]}")
-                    print("--------")
-                while True:
-                    print("Content: ")
-                    content = sys.stdin.readlines()
-                    mes = Message(db.getLastMessageId(0) + 1,
-                                  self.user.name, args[1], content)
-                    db.addMessage(mes)
-                    self.writeMessage(mes)
             elif cmd == "clear":
                 os.system("clear")
             self.mode = "standart"

@@ -35,7 +35,7 @@
      <x>10</x>
      <y>0</y>
      <width>285</width>
-     <height>201</height>
+     <height>206</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -78,7 +78,7 @@
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Port:    </string>
+           <string>Port:     </string>
           </property>
          </widget>
         </item>
@@ -116,8 +116,23 @@
     </item>
     <item>
      <widget class="QCheckBox" name="useKeys">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
       <property name="text">
        <string>Exchange keys</string>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
