@@ -129,9 +129,9 @@ class Client:
         self.filetime = os.stat(self.infn).st_mtime
         self.mesbuf = list()
         self.mode = "standart"
+        self.db = Database(os.getcwd() + "/data/database.db")
 
     def writeMessage(self, mes: Message) -> None:
-        adress = mes.adress
         try:
             with open(self.outfn, "wb") as fb:
                 pickle.dump(mes, fb)
@@ -140,11 +140,15 @@ class Client:
         except FileNotFoundError:
             print("File not found")
         finally:
-            self.__sendMessage(self.outfn, adress)
+            self.__sendMessage(self.outfn, mes)
 
-    def __sendMessage(self, ofb: str, adress: str) -> None:
+    def __sendMessage(self, ofb: str, mes: Message) -> None:
         res = os.system(
-            f"scp {ofb} {adress}@localhost:/home/{adress}/Messenger/data/inmes.pkl")
+            f"scp -P {self.db.getPort(mes.adress)} {ofb} \
+{mes.adress}@{self.db.getAddress(mes.adress)}\
+:/home/{mes.adress}/Messenger/data/inmes.pkl")
+        if res:
+            print("Unable to send message!")
 
     def fileUpdated(self, path: str) -> bool:
         if self.filetime != os.stat(path).st_mtime:
@@ -155,31 +159,49 @@ class Client:
     def getingLoop(self) -> None:
         while True:
             if self.fileUpdated(self.infn):
-                db = Database(os.getcwd() + "/data/database.db")
                 with open(self.infn, "rb") as fb:
                     ex = pickle.load(fb)
-                    db.addMessage(ex.author, ex)
+                    self.db.addMessage(ex.author, ex)
                     if self.mode == "standart":
                         self.mesbuf.append(ex)
                     elif self.mode == "chat":
                         print("{ex.author}: {ex}")
-                db.closeConnection()
         self.getingLoop()
 
     def givingLoop(self) -> None:
-        db = Database(os.getcwd() + "/data/database.db")
         while True:
             cmd = input(">>> ")
             if cmd == "help":
-                print("send, check, clear")
+                print("add    | to add user to database")
+                print("remove | to remove user from database")
+                print("send   | to send a message to someone")
+                print("check  | to see unchecked messages")
+                print("hist   | to see chat history")
+                print("users  | to see all users")
+                print("clear  | to clear terminal output")
             elif cmd == "send":
                 sendto = input("Send to:\n")
                 print("Content: ")
                 content = sys.stdin.readlines()
-                mes = Message(db.getLastMessageId(sendto) +
-                              1, self.user, sendto, content)
-                db.addMessage(sendto, mes)
+                mes = Message(self.db.getLastMessageId(sendto) + 1,
+                              self.user, sendto, content)
+                self.db.addMessage(sendto, mes)
                 self.writeMessage(mes)
+            elif cmd == "add":
+                name = input("Username: ")
+                adr = input("Adress:    ")
+                port = input("Port:     ")
+                self.db.addDialog(name, adr, port)
+            elif cmd == "hist":
+                data = self.db.getDialogContent(input("User: "))
+                for el in data:
+                    print(f"{el[1]}: {el[3]}")
+            elif cmd == "users":
+                data = self.db.getChats()
+                for el in data:
+                    print(el[0])
+            elif cmd == "remove":
+                self.db.removeDialog(input("User: "))
             elif cmd == "check":
                 for el in self.mesbuf:
                     print(f"Message from {el.author}:")
