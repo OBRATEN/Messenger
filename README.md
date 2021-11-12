@@ -35,4 +35,4 @@ To start Qt-based:
 ```bash
 ./start.sh
 ```
-[!image]https://github.com/OBRATEN/Messenger/tree/main/screenshots/git0.png?raw=true)
+[[!name](https://github.com/OBRATEN/Messenger/blob/main/screenshots/git0.png?raw=true)]
