@@ -2,7 +2,7 @@
 
 It is simple SSH messenger on python.
 Works by Linux SSH commands (ssh, ssh-copy-id, ssh-keygen, scp)
-Tested on Arch Linux, openssh service.
+Tested on Arch Linux, openssh deamon, systemd.
 
 To install openssh write:
 ```bash
