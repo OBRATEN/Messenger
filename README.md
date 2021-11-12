@@ -35,4 +35,4 @@ To start Qt-based:
 ```bash
 ./start.sh
 ```
-[!Screenshot](/home/arthur/git0.png)
+[!Screenshot](/screenshots/git0.png)
