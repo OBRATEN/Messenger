@@ -35,3 +35,4 @@ To start Qt-based:
 ```bash
 ./start.sh
 ```
+[!plot](/home/arthur/git0.png)
