@@ -4,6 +4,8 @@ It is simple SSH messenger on python.
 Works by Linux SSH commands (ssh, ssh-copy-id, ssh-keygen, scp)
 Tested on Arch Linux, openssh deamon, systemd.
 
+Archived project is located on "archives/"
+
 To install openssh write:
 ```bash
 sudo pacman -S openssh
