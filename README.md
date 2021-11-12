@@ -35,6 +35,13 @@ To start Qt-based:
 ```bash
 ./start.sh
 ```
+
+CLI:
+
 ![alt text](https://github.com/OBRATEN/Messenger/blob/main/screenshots/git0.png?raw=true)
+
+Qt Ui:
+
 ![alt text](https://github.com/OBRATEN/Messenger/blob/main/screenshots/git1.png?raw=true)
 
+![alt text](https://github.com/OBRATEN/Messenger/blob/main/screenshots/git2.png?raw=true)
